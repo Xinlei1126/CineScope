@@ -30,6 +30,7 @@ NuGet dependencies are declared in `CineScope.csproj`:
 - `Microsoft.AspNetCore.Identity.EntityFrameworkCore`
 - `Microsoft.EntityFrameworkCore.SqlServer`
 - `Microsoft.EntityFrameworkCore.Design` (development tooling)
+- `System.Security.Cryptography.Pkcs` 9.0.21 (patched version pinned to override vulnerable transitive 9.0.4)
 
 The site uses TMDB-hosted poster image URLs for sample records. It does not call the TMDB API and does not require a TMDB API key.
 
