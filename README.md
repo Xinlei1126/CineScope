@@ -27,7 +27,21 @@ dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
 
-Create the initial migration before the first run. The application applies available migrations on startup. `EnsureCreated` is used only when the project has no migrations, so a fresh checkout without the CLI can still initialize a local schema.
+Create the initial migration before the first run. The application applies available migrations on startup.
+
+### Fixing an existing `AspNetRoles` table conflict
+
+If you already ran an earlier version that used `EnsureCreated`, SQL Server may have the CineScope tables but no `InitialCreate` row in `__EFMigrationsHistory`. The initializer now checks for the complete legacy CineScope schema and baselines that initial migration without deleting data.
+
+For that existing database, replace the old `Data/DatabaseInitializer.cs` with this package version, stop the app, then run:
+
+```powershell
+dotnet run
+```
+
+The startup initializer records `InitialCreate` as applied only when all expected tables exist, then migration startup continues. Once the app starts successfully, `dotnet ef database update` can be used for later migrations. For a brand-new database, `dotnet ef database update` can run before `dotnet run` as usual.
+
+If the existing database has only some of the expected tables, back it up and use a fresh database name in `ConnectionStrings:DefaultConnection` instead; the migration will create the schema there without touching the old database.
 
 Set admin credentials using environment variables before starting the app:
 
@@ -61,4 +75,4 @@ The configured administrator is created and assigned the `Admin` role on startup
 
 ## Notes
 
-Poster URLs in the demo catalog point to TMDB image assets; the app does not call TMDB or require an API key. Levels 5–7 and deployment deliverables from the supplied brief are outside this Level 1–4 implementation. `dotnet` is not installed in the generation environment, so build and migration execution could not be verified here.
+Poster URLs in the demo catalog point to TMDB image assets; the app does not call TMDB or require an API key. Levels 5–7 and deployment deliverables from the supplied brief are outside this Level 1–4 implementation. The source was updated to address the legacy schema conflict, but build and database migration execution could not be verified in this environment because the .NET SDK is not installed.
