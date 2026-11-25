@@ -1,0 +1,17 @@
+@model MovieDetailsViewModel
+@{ ViewData["Title"] = Model.Movie.Title; }
+<div class="detail-backdrop" style="--hero-image:url('@Model.Movie.PosterUrl')"></div>
+<div class="container detail-container"><a asp-controller="Home" asp-action="Index" class="back-link">← Back to discover</a>
+<div class="detail-layout"><div class="detail-poster">@if (!string.IsNullOrWhiteSpace(Model.Movie.PosterUrl)){<img src="@Model.Movie.PosterUrl" alt="Poster for @Model.Movie.Title" />}</div>
+<div class="detail-copy"><div class="eyebrow text-accent">@Model.Movie.Genre · @Model.Movie.ReleaseYear</div><h1>@Model.Movie.Title</h1><div class="detail-stats"><span class="gold">★ @Model.Movie.Rating.ToString("0.0") <small>TMDB</small></span><span>@Model.Movie.Duration min</span><span class="gold">★ @(Model.ReviewCount > 0 ? Model.AverageRating.ToString("0.0") : "—") <small>community</small></span></div>
+<p class="detail-description">@Model.Movie.Description</p>
+@if (User.Identity?.IsAuthenticated == true) { <form asp-action="ToggleFavorite" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Movie.Id"/><input type="hidden" name="returnUrl" value="@Context.Request.Path"/><button class="btn @(Model.IsFavorite ? "btn-accent" : "btn-outline-light")">@(Model.IsFavorite ? "♥ In your list" : "♡ Add to my list")</button></form> }
+else { <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light">Join to save this film</a> }
+</div></div>
+<section class="reviews-section"><div class="section-heading"><div><div class="eyebrow text-accent">THE COMMUNITY SAYS</div><h2>Reviews & ratings</h2></div><span class="review-count">@Model.ReviewCount reviews</span></div>
+@if (TempData["Error"] is not null) { <div class="alert alert-warning">@TempData["Error"]</div> }
+@if (User.Identity?.IsAuthenticated == true) { <form asp-action="Review" method="post" class="review-form"><input type="hidden" name="id" value="@Model.Movie.Id"/><div class="row g-3"><div class="col-md-3"><label class="form-label" for="rating">Your rating</label><select id="rating" name="Rating" class="form-select">@for(int n=10;n>=1;n--){<option value="@n">@n / 10</option>}</select></div><div class="col-md-9"><label class="form-label" for="body">Your review</label><textarea id="body" name="Body" class="form-control" rows="3" minlength="3" maxlength="1200" required placeholder="What did you think? (3–1200 characters)"></textarea></div></div><button class="btn btn-accent mt-3">Post review</button><p class="form-hint">You can keep one review per film; posting again updates it.</p></form> }
+else { <div class="signin-prompt">Want to share your take? <a asp-controller="Account" asp-action="Login">Sign in</a> or <a asp-controller="Account" asp-action="Register">create a free account</a>.</div> }
+@if (Model.Reviews.Count == 0) { <p class="muted mt-4">No reviews yet. Be the first to share your thoughts.</p> }
+@foreach (var review in Model.Reviews) { <article class="review-card"><div class="review-avatar">@((review.User.DisplayName ?? review.User.Email ?? "M").Substring(0,1).ToUpperInvariant())</div><div class="review-content"><div class="review-top"><strong>@(review.User.DisplayName ?? review.User.Email)</strong><span class="gold">★ @review.Rating/10</span></div><small class="muted">@review.CreatedAt.ToLocalTime().ToString("MMM d, yyyy")</small><p>@review.Body</p></div></article> }
+</section></div>

@@ -1,0 +1,3 @@
+@model Movie
+@{ ViewData["Title"] = "Delete movie"; }
+<div class="container page-shell form-shell"><div class="eyebrow text-accent">ADMIN · CATALOG</div><h1>Delete this movie?</h1><div class="review-form mt-4"><h3>@Model.Title <span class="muted">(@Model.ReleaseYear)</span></h3><p class="muted">This also removes its reviews and favorites. This action cannot be undone.</p><form asp-action="Delete" method="post"><input type="hidden" name="id" value="@Model.Id"/><button class="btn btn-danger">Delete movie</button> <a asp-action="Index" class="btn btn-outline-light">Cancel</a></form></div></div>

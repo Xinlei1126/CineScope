@@ -1,0 +1,11 @@
+@model MovieIndexViewModel
+@{ ViewData["Title"] = "Discover"; var featured = Model.Movies.FirstOrDefault(); }
+<div class="container page-shell">
+@if (featured is not null && string.IsNullOrWhiteSpace(Model.Search) && string.IsNullOrWhiteSpace(Model.Genre)) {
+<section class="hero" style="--hero-image:url('@featured.PosterUrl')"><div class="hero-shade"></div><div class="hero-content"><div class="eyebrow"><span class="live-dot"></span> CURATED FOR YOUR NEXT MOVIE NIGHT</div><h1>Stories worth<br/><span>staying in for.</span></h1><p>Explore a handpicked collection of films, share what you love, and find your next favorite.</p><a class="btn btn-accent btn-lg" asp-controller="Movies" asp-action="Details" asp-route-id="@featured.Id">Explore featured film <span>→</span></a><div class="hero-proof"><span class="proof-stars">★★★★★</span> <span>Made for movie people</span></div></div><div class="hero-caption"><span>FEATURED FILM</span><strong>@featured.Title</strong><small>@featured.ReleaseYear · @featured.Genre</small></div></section>
+}
+<div class="section-heading"><div><div class="eyebrow text-accent">YOUR NEXT WATCH STARTS HERE</div><h2>@(Model.Genre is not null ? Model.Genre : Model.Search is not null ? "Search results" : "Popular right now")</h2><p>Fresh picks for every kind of film fan.</p></div>
+<div class="filter-pills"><a class="filter-pill @(Model.Genre is null ? "active" : "")" asp-action="Index">All movies</a>@foreach(var genre in Model.Genres){<a class="filter-pill @(Model.Genre == genre ? "active" : "")" asp-action="Index" asp-route-genre="@genre">@genre</a>}</div></div>
+@if (Model.Movies.Count == 0) { <div class="empty-state"><div class="empty-icon">⌕</div><h3>No movies found</h3><p>Try another title or category.</p><a asp-action="Index" class="btn btn-outline-light">Clear filters</a></div> }
+else { <div class="movie-grid">@foreach (var movie in Model.Movies) { <partial name="_MovieCard" model="movie" /> }</div> }
+</div>

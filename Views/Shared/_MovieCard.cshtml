@@ -1,0 +1,10 @@
+@model Movie
+<article class="movie-card">
+    <a asp-controller="Movies" asp-action="Details" asp-route-id="@Model.Id" class="poster-wrap">
+        @if (!string.IsNullOrWhiteSpace(Model.PosterUrl)) { <img class="poster-img" src="@Model.PosterUrl" alt="Poster for @Model.Title" loading="lazy" /> }
+        else { <div class="poster-fallback"><span>@Model.Title</span></div> }
+        <span class="poster-rating">★ @Model.Rating.ToString("0.0")</span>
+        <span class="poster-play">▶</span>
+    </a>
+    <div class="movie-card-info"><div class="movie-card-title">@Model.Title</div><div class="movie-card-meta">@Model.ReleaseYear <span>•</span> @Model.Genre</div></div>
+</article>

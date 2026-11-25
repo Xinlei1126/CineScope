@@ -1,0 +1,4 @@
+@model IReadOnlyList<Movie>
+@{ ViewData["Title"] = "My list"; }
+<div class="container page-shell"><div class="section-heading"><div><div class="eyebrow text-accent">YOUR COLLECTION</div><h2>My list</h2><p>Your saved films, all in one place.</p></div></div>
+@if(Model.Count == 0){<div class="empty-state"><div class="empty-icon">♡</div><h3>Your list is waiting</h3><p>Save films you want to watch later.</p><a asp-controller="Home" asp-action="Index" class="btn btn-accent">Browse movies</a></div>}else{<div class="movie-grid">@foreach(var movie in Model){<partial name="_MovieCard" model="movie"/>}</div>}</div>
