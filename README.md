@@ -54,7 +54,7 @@ dotnet run
 
 On Windows PowerShell use `$env:CineScope__AdminEmail` and `$env:CineScope__AdminPassword`.
 
-The configured administrator is created and assigned the `Admin` role on startup. Do not commit production credentials or connection strings to source control. Configure a production-grade SQL Server connection and HTTPS before deployment.
+The configured administrator is created and assigned the `Admin` role on startup. If admin credentials are not configured, the app still seeds its sample movie catalog; create an account and use the admin setup for catalog management. Do not commit production credentials or connection strings to source control. Configure a production-grade SQL Server connection and HTTPS before deployment.
 
 ## Data model
 

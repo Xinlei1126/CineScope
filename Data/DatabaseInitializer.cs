@@ -29,16 +29,20 @@ public static class DatabaseInitializer
             if (!await roles.RoleExistsAsync(role)) await roles.CreateAsync(new IdentityRole(role));
         var email = config["CineScope:AdminEmail"];
         var password = config["CineScope:AdminPassword"];
-        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password)) return;
-        var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var admin = await users.FindByEmailAsync(email);
-        if (admin is null)
+        if (!string.IsNullOrWhiteSpace(email) && !string.IsNullOrWhiteSpace(password))
         {
-            admin = new ApplicationUser { UserName = email, Email = email, EmailConfirmed = true, DisplayName = "CineScope Admin" };
-            var result = await users.CreateAsync(admin, password);
-            if (!result.Succeeded) throw new InvalidOperationException("Could not create configured admin: " + string.Join("; ", result.Errors.Select(e => e.Description)));
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var admin = await users.FindByEmailAsync(email);
+            if (admin is null)
+            {
+                admin = new ApplicationUser { UserName = email, Email = email, EmailConfirmed = true, DisplayName = "CineScope Admin" };
+                var result = await users.CreateAsync(admin, password);
+                if (!result.Succeeded) throw new InvalidOperationException("Could not create configured admin: " + string.Join("; ", result.Errors.Select(e => e.Description)));
+            }
+            if (!await users.IsInRoleAsync(admin, "Admin")) await users.AddToRoleAsync(admin, "Admin");
         }
-        if (!await users.IsInRoleAsync(admin, "Admin")) await users.AddToRoleAsync(admin, "Admin");
+
+        // Demo catalog seeding is independent of optional admin account configuration.
         if (!await db.Movies.AnyAsync())
         {
             db.Movies.AddRange(
